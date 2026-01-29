@@ -224,25 +224,34 @@
 
 
 // 3rd version of NoteForm.tsx
+
+
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { createNote, NewNoteData } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import css from './NoteForm.module.css';
+import { createNote, NewNoteData } from '@/lib/api';
 import { useNoteDraftStore } from '../../app/lib/stores/noteStore';
 
-const TAGS = ['Work', 'Personal', 'Meeting', 'Shopping', 'Todo'];
+const TAGS = ['Work', 'Personal', 'Meeting', 'Shopping', 'Todo'] as const;
+type TagType = (typeof TAGS)[number];
 
-const NoteForm = () => {
+type NoteFormProps = {
+  onCancel?: () => void;
+};
+
+export default function NoteForm({ onCancel }: NoteFormProps) {
   const router = useRouter();
   const { draft, setDraft, clearDraft } = useNoteDraftStore();
 
-  const { mutate } = useMutation({
+  // 🔹 Використовуємо isPending замість isLoading
+  const { mutate, isPending } = useMutation({
     mutationFn: createNote,
     onSuccess: () => {
       clearDraft();
-      router.push('/notes/filter/all');
+      if (onCancel) onCancel();
+      else router.push('/notes/filter/all');
     },
   });
 
@@ -257,17 +266,18 @@ const NoteForm = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const newNoteData: NewNoteData = {
       title: draft?.title || '',
       content: draft?.content || '',
-      tag: draft?.tag || 'Todo',
+      tag: (draft?.tag as TagType) || 'Todo',
     };
-
     mutate(newNoteData);
   };
 
-  const handleCancel = () => router.push('/notes/filter/all');
+  const handleCancel = () => {
+    if (onCancel) onCancel();
+    else router.push('/notes/filter/all');
+  };
 
   return (
     <div className={css.modal}>
@@ -319,13 +329,11 @@ const NoteForm = () => {
           <button type="button" onClick={handleCancel} className={css.cancelButton}>
             Cancel
           </button>
-          <button type="submit" className={css.submitButton}>
-            Create
+          <button type="submit" className={css.submitButton} disabled={isPending}>
+            {isPending ? 'Creating...' : 'Create note'}
           </button>
         </div>
       </form>
     </div>
   );
-};
-
-export default NoteForm;
+}
