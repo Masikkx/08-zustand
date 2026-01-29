@@ -2,6 +2,8 @@ import NotesClient from '@/app/notes/filter/Notes.client';
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { QueryClient } from "@tanstack/react-query";
 import { fetchNotes } from "@/lib/api";
+import { Metadata } from 'next';
+
 
 type Props = {
   params: Promise<{ slug?: string[] }>;
@@ -13,6 +15,64 @@ const isValidTag = (tag: string | undefined): tag is ValidTag => {
   const validTags: ValidTag[] = ["Todo", "Work", "Personal", "Meeting", "Shopping"];
   return !!tag && validTags.includes(tag as ValidTag);
 };
+
+
+
+// export async function generateMetadata({ params }: Props): Promise<Metadata> {
+//   const { slug } = await params;
+//   const tagParam = slug?.[0];
+//   const tag = isValidTag(tagParam) ? tagParam : undefined;
+
+//   return {
+//     title: `Notes - ${tag}`,
+//     description: `A collection of ${tag} notes on NoteHub.`,
+//     openGraph: {
+//       title: `Notes - ${tag}`,
+//       description: `A collection of ${tag} notes on NoteHub.`,
+//       url: `https://08-zustand-p6qvz852v-masikkx.vercel.app/notes/filter/${tag}`,
+//       siteName: "NoteHub",
+//       images: [
+//         {
+//           url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+//           width: 1200,
+//           height: 630,
+//           alt: tag ? `${tag} notes` : "NoteHub",
+//         },
+//       ],
+//       type: tag ? "article" : "website",
+//     },
+//   };
+// }
+
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const tag = slug?.[0];
+
+  return {
+    title: `Notes - ${tag}`,
+    description: `A collection of ${tag} notes on NoteHub.`,
+    openGraph: {
+      title: `Notes - ${tag}`,
+      description: `A collection of ${tag} notes on NoteHub.`,
+      url: `https://08-zustand-masikkx.vercel.app/notes/filter/${tag}`,
+      siteName: "NoteHub",
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          width: 1200,
+          height: 630,
+          alt: `${tag} notes`,
+        },
+      ],
+      type: "article",
+    },
+  };
+}
+
+
+
+
 
 const NotesByCategory = async ({ params }: Props) => {
   const { slug } = await params;
