@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: "NoteHub",
       images: [
         {
-          url: "https://notehub.com/notehub-og-meta.jpg",
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
           width: 1200,
           height: 630,
         },
