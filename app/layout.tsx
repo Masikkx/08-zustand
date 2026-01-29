@@ -12,7 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: "NoteHub",
       description: "NoteHub - A platform to share your notes with the world.",
-      url: "https://notehub.com",
+      url: "https://08-zustand-p6qvz852v-masikkx.vercel.app/",
       siteName: "NoteHub",
       images: [
         {
