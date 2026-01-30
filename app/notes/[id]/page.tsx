@@ -12,35 +12,36 @@ interface NotePageProps {
 
 
 
-export async function generateMetadata({ params }: NotePageProps): Promise<Metadata> {
-  const { id } = await params
-  const note = await fetchNoteById(id)
-  return {
-    title: `Note: ${note.title}`,
-    description: note.content.slice(0, 30),
-    openGraph: {
+export async function generateMetadata(
+  { params }: NotePageProps
+): Promise<Metadata> {
+  const { id } = await params;
+
+  try {
+    const note = await fetchNoteById(id);
+
+    return {
       title: `Note: ${note.title}`,
       description: note.content.slice(0, 100),
-      url: `https://08-zustand-eight-pied.vercel.app/notes/${id}`,
-      siteName: 'NoteHub',
-      images: [
-        {
-          url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
-          width: 1200,
-          height: 630,
-          alt: note.title,
-        },
-      ],
-      type: 'article',
-    },
-    twitter: {
-	    card: 'summary_large_image',
-      title: `${note.title}`,
-      description: note.content,
-      images: ['https://ac.goit.global/fullstack/react/og-meta.jpg'],
-    },
+      openGraph: {
+        title: `Note: ${note.title}`,
+        description: note.content.slice(0, 100),
+        url: `https://08-zustand-eight-pied.vercel.app/notes/${id}`,
+        images: [
+          {
+            url: "https://ac.goit.global/fullstack/react/og-meta.jpg",
+          },
+        ],
+      },
+    };
+  } catch (error) {
+    return {
+      title: "Note details",
+      description: "Note details page",
+    };
   }
 }
+
 
 export default async function NotePage({ params }: NotePageProps) {
   const queryClient = new QueryClient();
