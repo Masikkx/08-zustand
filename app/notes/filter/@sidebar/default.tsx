@@ -11,9 +11,6 @@ export default function SidebarNotes() {
           <li className={css.menuItem}>
             <Link href={`/notes/filter/all`} className={css.menuLink} >All notes</Link>
           </li>
-             <li className={css.menuItem}>
-            <Link href={`/notes/action/create`} className={css.menuLink} >Create Note</Link>
-          </li>
           {tags.map((tag) => (
             <li key={tag} className={css.menuItem}>
               <Link href={`/notes/filter/${tag}`} className={css.menuLink}>

@@ -17,7 +17,7 @@ export default function Pagination({
   return (
     <ReactPaginate
       pageCount={pageCount}
-      forcePage={currentPage - 1} // ReactPaginate починає з 0
+      forcePage={currentPage - 1}
       onPageChange={(selectedItem) => onPageChange(selectedItem.selected + 1)}
       containerClassName={css.pagination}
       pageClassName={css.pageItem}

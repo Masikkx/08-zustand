@@ -1,21 +1,38 @@
 import { create } from 'zustand';
-import { NewNoteData } from '../../../lib/api';
+import { persist } from 'zustand/middleware';
+
+export type NoteDraft = {
+  title: string;
+  content: string;
+  tag: string;
+};
 
 type NoteDraftStore = {
-  draft: NewNoteData;
-  setDraft: (note: NewNoteData) => void;
+  draft: NoteDraft;
+  setDraft: (note: Partial<NoteDraft>) => void;
   clearDraft: () => void;
 };
 
-// Під API потрібні поля: title, content, tag
-const initialDraft: NewNoteData = {
+export const initialDraft: NoteDraft = {
   title: '',
   content: '',
-  tag: 'Todo', // обов’язково, бо API очікує одну з 5 категорій
+  tag: 'Todo',
 };
 
-export const useNoteDraftStore = create<NoteDraftStore>((set) => ({
-  draft: initialDraft,
-  setDraft: (note) => set(() => ({ draft: note })),
-  clearDraft: () => set(() => ({ draft: initialDraft })),
-}));
+export const useNoteDraftStore = create<NoteDraftStore>()(
+  persist(
+    (set) => ({
+      draft: initialDraft,
+
+      setDraft: (note) =>
+        set((state) => ({
+          draft: { ...state.draft, ...note },
+        })),
+
+      clearDraft: () => set({ draft: initialDraft }),
+    }),
+    {
+      name: 'note-draft-storage', 
+    }
+  )
+);
