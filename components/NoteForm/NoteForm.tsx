@@ -6,7 +6,7 @@ import { createNote } from '@/lib/api';
 import {
   useNoteDraftStore,
   initialDraft,
-} from '../../app/lib/stores/noteStore';
+} from '../../app/lib/store/noteStore';
 
 const TAGS = ['Work', 'Personal', 'Meeting', 'Shopping', 'Todo'] as const;
 type TagType = (typeof TAGS)[number];
