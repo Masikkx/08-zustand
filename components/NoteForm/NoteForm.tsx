@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import css from './NoteForm.module.css';
 import { createNote } from '@/lib/api';
 import {
@@ -17,9 +18,21 @@ type NoteFormProps = {
 
 export default function NoteForm({ onCancel }: NoteFormProps) {
   const router = useRouter();
-  const { draft, setDraft, clearDraft } = useNoteDraftStore();
+  const queryClient = useQueryClient();
 
+  const { draft, setDraft, clearDraft } = useNoteDraftStore();
   const formValues = draft ?? initialDraft;
+
+  const { mutateAsync: createNoteMutation } = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      clearDraft();
+
+      if (onCancel) onCancel();
+      else router.back();
+    },
+  });
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -38,12 +51,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
     const content = formData.get('content') as string;
     const tag = formData.get('tag') as TagType;
 
-    await createNote({ title, content, tag });
-
-    clearDraft();
-
-    if (onCancel) onCancel();
-    else router.back();
+    await createNoteMutation({ title, content, tag });
   }
 
   const handleCancel = () => {
